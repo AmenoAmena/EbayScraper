@@ -28,18 +28,21 @@ search_bar.send_keys(product_to_buy)
 submit_btn = driver.find_element(By.ID, "gh-btn")
 submit_btn.click()
 
-filter_select = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_element_located((By.XPATH, "/html/body/div[5]/div[4]/div[1]/div[2]/div[2]/div[3]/div[1]/div/span/button"))
-)
+#filter_select = WebDriverWait(driver, 10).until(
+#    expected_conditions.presence_of_element_located((By.XPATH, "/html/body/div[5]/div[4]/div[1]/div[2]/div[2]/div[3]/div[1]/div/span/button"))
+#)
+#
+#filter_select.click()
 
-filter_select.click()
+# Execute JavaScript to set aria-expanded to true
+driver.execute_script("document.querySelector('button[aria-label=\"Sort selector. Best Match selected.\"]').setAttribute('aria-expanded', 'true')")
+
 
 highest_to_lowest_filter = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_element_located((By.XPATH, "/html/body/div[5]/div[4]/div[1]/div[2]/div[2]/div[3]/div[1]/div/span/span/ul/li[5]/a"))
+    expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='s0-60-0-12-8-4-1-0-4[1]-70-39-1-content-menu']/li[5]/a"))
 )
 
 highest_to_lowest_filter.click()
 
-products = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_all_elements_located((By.CLASS_NAME, 's-item__link'))
-)
+
+
