@@ -11,11 +11,17 @@ import sys
 import re
 from bs4 import BeautifulSoup as bs
 
+
 class Product:
     def __init__(self,name,price,link):
         self.name = name
         self.price = price
         self.link = link
+
+    def __str__(self):
+        return f"title: {self.title} || price: {self.price}"
+
+counter = 0
 
 options = Options()
 options.add_experimental_option("detach", True)
@@ -43,42 +49,27 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 )
 highest_to_lowest_filter.click()
 
-product = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='item42902380ad']"))
+products = WebDriverWait(driver, 10).until(
+    expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
 )
 
-product_html = product.get_attribute('outerHTML')
+product_list = products[2:12]
 
-product_title = product.find_element(By.CLASS_NAME,"s-item__title")
+product_list = []
 
-print(product_title.get_attribute("innerHTML"))
+for product in product_list:
+    product_title = product.find_element(By.CLASS_NAME, "s-item__title").text
+    product_price = product.find_element(By.CLASS_NAME, "s-item__price").get_attribute("innerHTML")
+    price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
+    if price_match:
+        product_price = price_match.group()
+    product_link = product.find_element(By.TAG_NAME, "a").get_attribute("href")
+    product_obj = Product(name=product_title, price=product_price, link=product_link)
+    product_list.append(product_obj)
 
-# product_id = product.get_attribute("id")
-
-#product_info = product.find_element(By.CLASS_NAME,"s-item__info")
-#product_link = product_info.find_element(By.TAG_NAME,"a")
-#print(product_link.get_attribute("innerHTML"))
-
-
-#print(product_info.get_attribute("innerHTML"))
-
-#product_name = product.find_element(By.CLASS_NAME,"s-item__title")
-#product_name_span = product_name.find_element(By.TAG_NAME,"span").get_attribute("innerHTML")
-#print(product_name_span)
-
-#print(product.get_attribute("innerHTML"))
-
-#product_price = product.find_element(By.XPATH, f"//*[@id='{product_id}']/div/div[2]/div[3]/div[1]/div[1]/span").get_attribute("innerHTML")
-#
-#price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
-#if price_match:
-#    product_price = price_match.group()
-#    print("Product Price:", product_price)
-#else:
-#    print("Price not found")
+    counter += 1
 
 
 
-
-#sleep(5)
-#driver.quit()
+sleep(5)
+driver.quit()
