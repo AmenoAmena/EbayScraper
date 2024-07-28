@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import sys
+import re
 
 class Product:
     def __init__(self,name,price,link):
@@ -45,6 +46,16 @@ product = WebDriverWait(driver, 10).until(
     expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
 )
 
-product_price = driver.find_element(By.CLASS_NAME, "s-item__detail").text
+product_price = product.find_element(By.CLASS_NAME, "s-item__price").get_attribute("innerHTML")
 
-print(f'price: {product_price}')
+price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
+if price_match:
+    product_price = price_match.group()
+    print("Product Price:", product_price)
+else:
+    print("Price not found")
+
+
+
+#sleep(5)
+#driver.quit()
