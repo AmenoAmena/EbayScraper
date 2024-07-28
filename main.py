@@ -44,15 +44,14 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 highest_to_lowest_filter.click()
 
 product = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
+    expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='item42902380ad']"))
 )
 
 product_html = product.get_attribute('outerHTML')
-soup = bs(product_html, "html.parser")
 
 product_title = product.find_element(By.CLASS_NAME,"s-item__title")
 
-print(product.get_attribute('outerHTML'))
+print(product_title.get_attribute("innerHTML"))
 
 # product_id = product.get_attribute("id")
 
