@@ -37,11 +37,7 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 highest_to_lowest_filter.click()
 
 products = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item s-item__pl-on-bottom"))
+    expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
 )
 
-for product in products:
-    print("1")
-
-
-
+print(products.get_attribute("innerHTML"))
