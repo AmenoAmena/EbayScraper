@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import sys
 import re
+from bs4 import BeautifulSoup as bs
 
 class Product:
     def __init__(self,name,price,link):
@@ -46,7 +47,14 @@ product = WebDriverWait(driver, 10).until(
     expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
 )
 
-product_id = product.get_attribute("id")
+product_html = product.get_attribute('outerHTML')
+soup = bs(product_html, "html.parser")
+
+product_title = product.find_element(By.CLASS_NAME,"s-item__title")
+
+print(product.get_attribute('outerHTML'))
+
+# product_id = product.get_attribute("id")
 
 #product_info = product.find_element(By.CLASS_NAME,"s-item__info")
 #product_link = product_info.find_element(By.TAG_NAME,"a")
@@ -61,14 +69,14 @@ product_id = product.get_attribute("id")
 
 #print(product.get_attribute("innerHTML"))
 
-product_price = product.find_element(By.XPATH, f"//*[@id='{product_id}']/div/div[2]/div[3]/div[1]/div[1]/span").get_attribute("innerHTML")
-
-price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
-if price_match:
-    product_price = price_match.group()
-    print("Product Price:", product_price)
-else:
-    print("Price not found")
+#product_price = product.find_element(By.XPATH, f"//*[@id='{product_id}']/div/div[2]/div[3]/div[1]/div[1]/span").get_attribute("innerHTML")
+#
+#price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
+#if price_match:
+#    product_price = price_match.group()
+#    print("Product Price:", product_price)
+#else:
+#    print("Price not found")
 
 
 
