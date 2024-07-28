@@ -9,6 +9,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 import sys
 
+class Product:
+    def __init__(self,name,price,link):
+        self.name = name
+        self.price = price
+        self.link = link
 
 options = Options()
 options.add_experimental_option("detach", True)
@@ -36,8 +41,10 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 )
 highest_to_lowest_filter.click()
 
-products = WebDriverWait(driver, 10).until(
+product = WebDriverWait(driver, 10).until(
     expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
 )
 
-print(products.get_attribute("innerHTML"))
+product_price = driver.find_element(By.CLASS_NAME, "s-item__detail").text
+
+print(f'price: {product_price}')
