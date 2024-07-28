@@ -46,7 +46,22 @@ product = WebDriverWait(driver, 10).until(
     expected_conditions.presence_of_element_located((By.CLASS_NAME, "s-item__wrapper"))
 )
 
-product_price = product.find_element(By.CLASS_NAME, "s-item__price").get_attribute("innerHTML")
+product_id = product.get_attribute("id")
+
+#product_info = product.find_element(By.CLASS_NAME,"s-item__info")
+#product_link = product_info.find_element(By.TAG_NAME,"a")
+#print(product_link.get_attribute("innerHTML"))
+
+
+#print(product_info.get_attribute("innerHTML"))
+
+#product_name = product.find_element(By.CLASS_NAME,"s-item__title")
+#product_name_span = product_name.find_element(By.TAG_NAME,"span").get_attribute("innerHTML")
+#print(product_name_span)
+
+#print(product.get_attribute("innerHTML"))
+
+product_price = product.find_element(By.XPATH, f"//*[@id='{product_id}']/div/div[2]/div[3]/div[1]/div[1]/span").get_attribute("innerHTML")
 
 price_match = re.search(r'\$[0-9,]+\.\d{2}', product_price)
 if price_match:
@@ -54,6 +69,7 @@ if price_match:
     print("Product Price:", product_price)
 else:
     print("Price not found")
+
 
 
 
