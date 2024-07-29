@@ -19,7 +19,7 @@ class Product:
         self.link = link
 
     def __str__(self):
-        return f"title: {self.title} || price: {self.price}"
+        return f"title: {self.name} || price: {self.price}"
 
 counter = 0
 
@@ -55,7 +55,7 @@ products = WebDriverWait(driver, 10).until(
 
 product_list = products[2:12]
 
-product_list = []
+product_objects = []
 
 for product in product_list:
     product_title = product.find_element(By.CLASS_NAME, "s-item__title").text
@@ -65,11 +65,12 @@ for product in product_list:
         product_price = price_match.group()
     product_link = product.find_element(By.TAG_NAME, "a").get_attribute("href")
     product_obj = Product(name=product_title, price=product_price, link=product_link)
-    product_list.append(product_obj)
+    product_objects.append(product_obj)
 
     counter += 1
 
-
+for product in product_objects:
+    print(product)
 
 sleep(5)
 driver.quit()
