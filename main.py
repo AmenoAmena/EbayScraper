@@ -48,9 +48,12 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 )
 highest_to_lowest_filter.click()
 
-products = WebDriverWait(driver, 10).until(
-    expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
-)
+try : 
+    products = WebDriverWait(driver, 10).until(
+        expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
+    )
+except:
+    print("Can't find products")
 
 #First 2 skipped because ebay made filler 2 products.if you want to increase of product number make the 12 higher
 product_list = products[2:12]
