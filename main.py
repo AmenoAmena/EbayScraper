@@ -21,7 +21,6 @@ class Product:
     def __str__(self):
         return f"title: {self.name} || price: {self.price}"
 
-counter = 0
 
 options = Options()
 options.add_experimental_option("detach", True)
@@ -53,6 +52,7 @@ products = WebDriverWait(driver, 10).until(
     expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
 )
 
+#First 2 skipped because ebay made filler 2 products.if you want to increase of product number make the 12 higher
 product_list = products[2:12]
 
 product_objects = []
@@ -67,10 +67,12 @@ for product in product_list:
     product_obj = Product(name=product_title, price=product_price, link=product_link)
     product_objects.append(product_obj)
 
-    counter += 1
+with open('products.csv', "w",newline='') as product_file:
+    writer = csv.writer(product_file,delimiter=',')
+    writer.writerow(["Name", "Price", "Link"])
+    for product_object in product_objects:
+        writer.writerow([product_object.name, product_object.price, product_object.link])
 
-for product in product_objects:
-    print(product)
 
 sleep(5)
 driver.quit()
