@@ -19,6 +19,27 @@ class Product:
     def __str__(self):
         return f"title: {self.name} || price: {self.price}"
 
+def pagination(url, pg_number):
+    base_url = url.split("&_pgn=")[0]
+    return f"{base_url}&_pgn={pg_number}"
+
+def scrape_products():
+    products = []
+    while True:
+        products = WebDriverWait(driver, 10).until(
+            expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
+        )
+        number_of_products = len(products)
+        products = WebDriverWait(driver, 10).until(
+            expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
+        )
+        if len(products) == number_of_products:
+            current_url = driver.current_url
+            pagination(current_url)
+            break
+
+    return products
+
 options = Options()
 options.add_experimental_option("detach", True)
 
@@ -47,22 +68,10 @@ highest_to_lowest_filter = WebDriverWait(driver, 10).until(
 highest_to_lowest_filter.click()
 
 try: 
-    products = []
-    while True:
-        products = WebDriverWait(driver, 10).until(
-            expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
-        )
-        number_of_products = len(products)
-        products = WebDriverWait(driver, 10).until(
-            expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
-        )
-        if len(products) == number_of_products:
-            break
+    products = scrape_products()
+except Exception as e:
+    print(f"Can't find products: {e}")
 
-except:
-    print("Can't find products")
-
-# First 2 skipped because ebay made filler 2 products. If you want to increase the number of products, make the 12 higher
 product_list = products[2:]
 
 product_objects = []
@@ -77,8 +86,8 @@ for product in product_list:
     product_obj = Product(name=product_title, price=product_price, link=product_link)
     product_objects.append(product_obj)
 
-#with open('products.csv', "w", newline='', encoding='utf-8') as product_file:
-#    writer = csv.writer(product_file, delimiter=',')
-#    writer.writerow(["Name", "Price", "Link"])
-#    for product_object in product_objects:
-#        writer.writerow([product_object.name, product_object.price, product_object.link])
+with open('products.csv', "w", newline='', encoding='utf-8') as product_file:
+    writer = csv.writer(product_file, delimiter=',')
+    writer.writerow(["Name", "Price", "Link"])
+    for product_object in product_objects:
+        writer.writerow([product_object.name, product_object.price, product_object.link])
