@@ -7,6 +7,32 @@ class Frontend(ctk.CTk):
         self.title("EbayScraper")
         self.geometry("800x600")
 
-if __name__ == "__main__":
-    app = Frontend()
-    app.mainloop()
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.product_name = ctk.CTkEntry(self, placeholder_text="Product Name: ")
+        self.product_name.pack(pady=20)
+
+        self.options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        self.option_menu = ctk.CTkOptionMenu(self, values=self.options)
+        self.option_menu.pack(pady=20)
+
+        self.button = ctk.CTkButton(self, text="Get Text", command=self.grab_values)
+        self.button.pack(pady=20)
+
+    def grab_values(self):
+        
+        self.product_name = self.product_name.get()
+        self.page_number = self.option_menu.get()
+
+        self.scraping()        
+
+    def scraping(self):
+        self.scraper = Backend()
+        self.scraper.scrape(self.product_name,self.page_number)
+        self.scraper.save_to_csv('products.csv')
+        self.scraper.quit_driver()
+
+
+app = Frontend()
+app.mainloop()

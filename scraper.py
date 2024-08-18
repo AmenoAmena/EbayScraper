@@ -20,6 +20,7 @@ class Product:
 class Backend:
     def __init__(self):
         self.options = Options()
+        self.options.add_argument('--headless=new')
         self.service = Service("chromedriver.exe")
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.get("https://www.ebay.com/")
@@ -49,7 +50,7 @@ class Backend:
             print(f"Can't find products: {e}")
             return []
 
-    def scrape(self, name):
+    def scrape(self, name,page_number):
         self.search_bar = WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='gh-ac']"))
         )
@@ -68,7 +69,7 @@ class Backend:
         self.base_url = self.driver.current_url
 
         
-        for page in range(1, 5):  
+        for page in range(0, int(page_number)):  
             if page > 1:
                 self.driver.get(self.pagination(self.base_url, page))
                 sleep(2)  
@@ -109,6 +110,3 @@ class Backend:
         self.save_to_csv('products.csv')
         self.quit_driver()
 
-if __name__ == "__main__":
-    scraper = EbayScraper()
-    scraper.main()
