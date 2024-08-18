@@ -77,8 +77,8 @@ for product in product_list:
     product_obj = Product(name=product_title, price=product_price, link=product_link)
     product_objects.append(product_obj)
 
-with open('products.csv', "w", newline='', encoding='utf-8') as product_file:
-    writer = csv.writer(product_file, delimiter=',')
-    writer.writerow(["Name", "Price", "Link"])
-    for product_object in product_objects:
-        writer.writerow([product_object.name, product_object.price, product_object.link])
+#with open('products.csv', "w", newline='', encoding='utf-8') as product_file:
+#    writer = csv.writer(product_file, delimiter=',')
+#    writer.writerow(["Name", "Price", "Link"])
+#    for product_object in product_objects:
+#        writer.writerow([product_object.name, product_object.price, product_object.link])
