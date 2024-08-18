@@ -91,3 +91,77 @@ with open('products.csv', "w", newline='', encoding='utf-8') as product_file:
     writer.writerow(["Name", "Price", "Link"])
     for product_object in product_objects:
         writer.writerow([product_object.name, product_object.price, product_object.link])
+
+
+class EbayScraper:
+    def __init__(self,DRIVER_PATH):
+        self.options = Options()
+        self.options.add_argument('--headless=new')
+        self.service = Service(DRIVER_PATH)
+        self.driver = webdriver.Chrome(service=self.service, options=self.options)
+        self.driver.get("https://www.ebay.com/")
+        self.number_of_products = 0
+        self.product_objects = []
+    
+    def scrape(self, name: str, min_price: float = None, max_price: float = None):
+        self.search_bar = WebDriverWait(self.driver, 10).until(
+            expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='gh-ac']"))
+        )
+        self.search_bar.send_keys(name)
+
+        self.submit_btn = self.driver.find_element(By.ID, "gh-btn")
+        self.submit_btn.click()
+
+        if min_price and max_price:
+            self.min_inp = WebDriverWait(self.driver, 10).until(
+                expected_conditions.presence_of_element_located((By.ID, "s0-60-0-12-8-0-1-2-2-8[2]-textrange-beginParamValue-textbox"))
+            )
+
+            self.max_inp = WebDriverWait(self.driver, 10).until(
+                expected_conditions.presence_of_element_located((By.ID, "s0-60-0-12-8-0-1-2-2-8[2]-textrange-endParamValue-textbox"))
+            )
+
+            self.min_inp.send_keys(min_price)
+            self.max_inp.send_keys(max_price)
+
+            self.price_submit = self.driver.find_element(By.CLASS_NAME, "btn--states")
+            self.price_submit.click()
+
+        try:
+            self.products = []
+            while True:
+                self.products = WebDriverWait(self.driver, 10).until(
+                    expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
+                )
+                self.number_of_products = len(self.products)
+                self.products = WebDriverWait(self.driver, 10).until(
+                    expected_conditions.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 's-item')]"))
+                )
+                if len(self.products) == self.number_of_products:
+                    break
+        except Exception as e:
+            print(f"Can't find products: {e} ")
+
+        self.product_list = self.products[2:]
+
+    def create_product(self):
+        for product in self.product_list:
+            self.product_title = product.find_element(By.CLASS_NAME, "s-item__title").text
+            self.product_price = product.find_element(By.CLASS_NAME, "s-item__price").get_attribute("innerHTML")
+            self.price_match = re.search(r'\$[0-9,]+\.\d{2}', self.product_price)
+            if self.price_match:
+                self.product_price = self.price_match.group()
+            self.product_link = product.find_element(By.TAG_NAME, "a").get_attribute("href")
+            self.product_img = product.find_element(By.TAG_NAME, "img").get_attribute("src")
+            self.product_obj = EbayProduct(name=self.product_title, price=self.product_price, link=self.product_link,img_src=self.product_img)
+            self.product_objects.append(self.product_obj)
+
+    def print_objects(self):
+        for product in self.product_objects:
+            print(product)
+
+    def get_products(self):
+        return self.product_objects
+
+    def quit_driver(self):
+        self.driver.quit()
