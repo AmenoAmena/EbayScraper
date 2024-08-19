@@ -20,7 +20,7 @@ class Product:
 class Backend:
     def __init__(self):
         self.options = Options()
-        self.options.add_argument('--headless=new')
+        #self.options.add_argument('--headless=new')
         self.service = Service("chromedriver.exe")
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.get("https://www.ebay.com/")
@@ -61,21 +61,28 @@ class Backend:
 
         self.driver.execute_script("document.querySelector('button[aria-label=\"Sort selector. Best Match selected.\"]').setAttribute('aria-expanded', 'true')")
 
-        self.highest_to_lowest_filter = WebDriverWait(self.driver, 10).until(
-            expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='s0-60-0-12-8-4-1-0-4[1]-70-39-1-content-menu']/li[5]/a"))
-        )
+
+        if len(name) == 1:
+            self.highest_to_lowest_filter = WebDriverWait(self.driver, 10).until(
+                expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='s0-60-0-12-8-4-1-0-4[1]-70-39-1-content-menu']/li[5]/a"))
+            )
+
+        if len(name) >= 2:
+            self.highest_to_lowest_filter = WebDriverWait(self.driver, 10).until(
+                expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='s0-60-0-12-8-4-1-0-4[0]-70-39-1-content-menu']/li[5]/a"))
+            )
+
+
         self.highest_to_lowest_filter.click()
 
         self.base_url = self.driver.current_url
 
         
-        for page in range(0, int(page_number)):  
-            if page > 1:
-                self.driver.get(self.pagination(self.base_url, page))
-                sleep(2)  
+        for page in range(1, int(page_number)+1):  
+            self.driver.get(self.pagination(self.base_url, page))
             products = self.get_products_on_page()
             self.create_product(products)
-            sleep(2)  
+            print(f"page {page} scraped")
 
     def create_product(self, products):
         for product in self.products:
@@ -106,7 +113,7 @@ class Backend:
         self.driver.quit()
 
     def main(self):
-        self.scrape("laptop")
+        self.scrape("laptop",3)
         self.save_to_csv('products.csv')
         self.quit_driver()
 

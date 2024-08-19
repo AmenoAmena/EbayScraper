@@ -17,7 +17,7 @@ class Frontend(ctk.CTk):
         self.option_menu = ctk.CTkOptionMenu(self, values=self.options)
         self.option_menu.pack(pady=20)
 
-        self.button = ctk.CTkButton(self, text="Get Text", command=self.grab_values)
+        self.button = ctk.CTkButton(self, text="Search", command=self.grab_values)
         self.button.pack(pady=20)
 
     def grab_values(self):
