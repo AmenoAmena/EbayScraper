@@ -20,7 +20,7 @@ class Product:
 class Backend:
     def __init__(self):
         self.options = Options()
-        self.options.add_argument('--headless=new')
+        self.options.add_argument("--headless=new")
         self.service = Service("chromedriver.exe")
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.get("https://www.ebay.com/")
@@ -64,7 +64,9 @@ class Backend:
         
         for page in range(1, int(page_number)+1):  
             self.driver.get(self.pagination(self.base_url, page))
+            sleep(2)
             products = self.get_products_on_page()
+            sleep(2)
             self.create_product(products)
             print(f"page {page} scraped")
 
