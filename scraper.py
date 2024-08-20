@@ -20,7 +20,7 @@ class Product:
 class Backend:
     def __init__(self):
         self.options = Options()
-        self.options.add_argument("--headless=new")
+        #self.options.add_argument("--headless=new")
         self.service = Service("chromedriver.exe")
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.get("https://www.ebay.com/")
@@ -58,6 +58,13 @@ class Backend:
 
         self.submit_btn = self.driver.find_element(By.ID, "gh-btn")
         self.submit_btn.click()
+
+        self.driver.execute_script("document.querySelector('button[aria-label=\"Sort selector. Best Match selected.\"]').setAttribute('aria-expanded', 'true')")
+
+        self.highest_to_lowest_filter = WebDriverWait(self.driver, 10).until(
+            expected_conditions.presence_of_element_located((By.XPATH, "//*[@id='s0-60-0-12-8-4-1-0-4[1]-70-39-1-content-menu']/li[5]/a"))
+        )
+        self.highest_to_lowest_filter.click()
 
         self.base_url = self.driver.current_url
 
